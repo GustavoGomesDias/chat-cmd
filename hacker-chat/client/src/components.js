@@ -1,9 +1,12 @@
 import blessed from 'blessed';
 
 export default class ComponentsBuilder {
-    #screen
-    #layout
-    #input
+    #screen;
+    #layout;
+    #input;
+    #chat;
+    #status;
+    #activityLog;
 
     constructor(){
 
@@ -16,7 +19,7 @@ export default class ComponentsBuilder {
             mouse: true,
             keys: true,
             top: 0,
-            scrollbar: {
+            scrollboar: {
                 ch: ' ',
                 inverse: true
             },
@@ -55,7 +58,7 @@ export default class ComponentsBuilder {
     setInputComponent(onEnterPressed){
         const input = blessed.textarea({
             parent: this.#screen,
-            botton: 0,
+            bottom: 0,
             height: '10%',
             inputOnFocus: true,
             padding: {
@@ -66,7 +69,7 @@ export default class ComponentsBuilder {
                 fg: '#f6f6f6',
                 bg: '#353535'
             }
-        })
+        });
 
         input.key('enter', onEnterPressed);
         
@@ -75,11 +78,56 @@ export default class ComponentsBuilder {
         return this;
     }
 
+    setChatComponent(){
+        this.#chat = blessed.list({
+            ...this.#baseComponent(),
+            parent: this.#layout,
+            align: 'left',
+            width: '50%',
+            height: '90%',
+            items: ['{bold}Messenger{/}']
+        });
+
+        return this;
+    }
+
+    // Registra quem tá logado
+    setStatusComponent(){
+        this.#status = blessed.list({
+            ...this.#baseComponent(),
+            parent: this.#layout,
+            width: '25%',
+            height: '90%',
+            items: ['{bold}Users on Romm{/}']
+        });
+
+        return this;
+    }
+
+    // Registra quem saiu e quem entrou
+    setActivityLogComponent(){
+        this.#activityLog = blessed.list({
+            ...this.#baseComponent(),
+            parent: this.#layout,
+            width: '25%',
+            height: '90%',
+            style: {
+                fg: 'yellow'
+            },
+            items: ['{bold}Activity Log{/}']
+        });
+
+        return this;
+    }
+
     build(){
         const components = {
             screen: this.#screen,
             input: this.#input,
-        }
+            chat: this.#chat,
+            activityLog: this.#activityLog,
+            status: this.#status
+        };
 
         return components;
     }
