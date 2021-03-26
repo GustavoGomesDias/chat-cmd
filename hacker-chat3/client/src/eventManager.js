@@ -6,7 +6,7 @@ export default class EventManager {
         this.componentEmitter = componentEmitter;
         this.socketClient = socketClient;
     }
-
+    
     joinRoomAndWaitForMessages(data){
         this.socketClient.sendMessage(constants.events.socket.JOIN_ROOM, data);
 
@@ -22,6 +22,21 @@ export default class EventManager {
         this.#updateUsersComponent();
     }
 
+    disconnectUser(user){
+        const { userName, id } = user;
+        this.#allUsers.delete(id);
+
+        this.#updateACtivityLogComponent(`${userName} left!`);
+        this.#updateUsersComponent();
+    }
+
+    message(message){
+        this.componentEmitter.emit(
+            constants.events.app.MESSAGE_RECEIVED,
+            message
+        )
+    }
+
     newUserConnected(message){
         const user = message;
         this.#allUsers.set(user.id, user.userName);
@@ -35,13 +50,6 @@ export default class EventManager {
             message
         )
     }
-
-    // #emitComponetUpdate(event, message){
-    //     this.componentEmitter.emit(
-    //         event,
-    //         message
-    //     )
-    // }
 
     #updateUsersComponent(){
         this.componentEmitter.emit(
